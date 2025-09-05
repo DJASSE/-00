@@ -2,30 +2,30 @@
 <html lang="ar">
 <head>
   <meta charset="utf-8" />
-  <title>دردشة مترجمة + أصدقاء + مكالمات</title>
+  <title>دردشة مترجمة متكاملة</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root{
       --bg:#071025; --card:#0f1724; --accent:#00d1b2; --accent2:#3b82f6; --muted:#9aa6bf;
+      --danger:#ff4d4f;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Tahoma,Arial;background:linear-gradient(135deg,var(--bg),#051029);color:#fff;direction:rtl}
-    header{padding:12px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.12)}
-    .nav {display:flex;gap:8px;align-items:center}
+    header{padding:12px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02)}
+    .nav {display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .nav button{padding:8px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#000;cursor:pointer}
-    .badge{background:#ff4d4f;color:#fff;padding:2px 6px;border-radius:10px;margin-left:6px;font-size:12px}
     main{max-width:1100px;margin:18px auto;padding:12px}
     .page{display:none;background:rgba(255,255,255,0.03);padding:14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
     .page.active{display:block}
     h2{margin:0 0 8px 0;color:var(--accent)}
     label{display:block;margin-top:8px;color:var(--muted)}
     input,select,button,textarea{width:100%;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:#fff}
-    button.gray{background:#333}
+    button.gray{background:#333;color:#fff}
     .users-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
     .user-row{display:flex;gap:8px;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)}
-    .user-row .meta{flex:1}
+    .meta{flex:1}
     #chat-box{height:56vh;overflow:auto;padding:12px;background:rgba(0,0,0,0.06);border-radius:8px}
-    .msg{margin:8px 0;padding:10px;border-radius:12px;max-width:75%;word-break:break-word}
+    .msg{margin:8px 0;padding:10px;border-radius:12px;max-width:76%;word-break:break-word}
     .me{background:linear-gradient(90deg,var(--accent),#00f6d0);color:#000;margin-left:auto;text-align:right}
     .other{background:#1b2638;color:#fff;margin-right:auto;text-align:left}
     .muted{color:var(--muted);font-size:13px}
@@ -33,19 +33,18 @@
     .small{padding:8px;font-size:13px}
     .incoming-call{position:fixed;left:22px;bottom:22px;background:#111;padding:14px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6);display:none;z-index:999}
     .hidden{display:none}
-    img,video{max-width:260px;border-radius:8px;margin-top:6px}
+    img,video,audio{max-width:320px;border-radius:8px;margin-top:6px}
+    .badge{background:var(--danger);color:#fff;padding:2px 6px;border-radius:10px;margin-left:6px;font-size:12px}
     footer.note{max-width:1100px;margin:12px auto;color:var(--muted);font-size:13px;text-align:center}
-    @media(max-width:900px){body{padding:8px} .nav{flex-wrap:wrap}}
+    @media(max-width:900px){body{padding:8px} header{flex-direction:column;align-items:flex-start}}
   </style>
 </head>
 <body>
-
 <header>
   <div>
-    <strong>دردشة مترجمة</strong>
-    <div class="muted" style="font-size:13px">تطبيق تعليمي — استخدم Chrome/Edge للحصول على أفضل تجربة</div>
+    <strong>دردشة مترجمة متكاملة</strong><br>
+    <span class="muted">تشغيل محلي: استخدم Chrome/Edge لتجربة الصوت والـWebRTC</span>
   </div>
-
   <div class="nav">
     <button id="navLogin">🔐 تسجيل</button>
     <button id="navSearch">🔍 بحث</button>
@@ -57,22 +56,22 @@
 </header>
 
 <main>
-  <!-- PAGE: Login -->
+  <!-- LOGIN PAGE -->
   <section id="pageLogin" class="page active">
-    <h2>🔐 تسجيل / لغتي</h2>
+    <h2>🔐 تسجيل / اختيار اللغة</h2>
     <label>اسم المستخدم</label>
     <input id="username" placeholder="اكتب اسمك...">
-    <label>ابحث لغة</label>
+    <label>ابحث لغة (اكتب للبحث)</label>
     <input id="langSearch" placeholder="ابحث باسم اللغة...">
-    <label>اختر لغة التحدث</label>
-    <select id="langSelect" size="6" style="height:140px"></select>
+    <label>اختر لغة التحدث (تـُحفظ عند التسجيل)</label>
+    <select id="langSelect" size="6" style="height:160px"></select>
     <div style="display:flex;gap:8px;margin-top:8px">
       <button id="loginBtn">دخول</button>
-      <button id="loginGuestBtn" class="gray">دخول كزائر</button>
+      <button id="guestBtn" class="gray">دخول كزائر</button>
     </div>
   </section>
 
-  <!-- PAGE: Search -->
+  <!-- SEARCH PAGE -->
   <section id="pageSearch" class="page">
     <h2>🔍 بحث عن مستخدم</h2>
     <div class="muted">ابحث باسم المستخدم ثم أرسل طلب صداقة</div>
@@ -80,26 +79,26 @@
     <div id="userResults" class="users-list"></div>
   </section>
 
-  <!-- PAGE: Requests -->
+  <!-- REQUESTS PAGE -->
   <section id="pageRequests" class="page">
     <h2>📨 طلبات واردة</h2>
     <div id="requestsList"></div>
   </section>
 
-  <!-- PAGE: Friends -->
+  <!-- FRIENDS PAGE -->
   <section id="pageFriends" class="page">
     <h2>👥 أصدقائي</h2>
     <div id="friendsList" class="users-list"></div>
   </section>
 
-  <!-- PAGE: Chat -->
+  <!-- CHAT PAGE -->
   <section id="pageChat" class="page">
     <div style="display:flex;justify-content:space-between;align-items:center">
       <div>
         <h2 id="chatTitle">💬 لا يوجد محادثة</h2>
-        <div id="chatSubtitle" class="muted">اختر صديقاً من صفحة "أصدقائي" لبدء الدردشة</div>
+        <div id="chatSubtitle" class="muted">اختر صديقاً من صفحة "أصدقائي" لبدء</div>
       </div>
-      <div style="width:240px">
+      <div style="width:260px">
         <label>تبديل لغتي داخل الدردشة</label>
         <select id="chatLangSelect" size="4" style="height:90px"></select>
       </div>
@@ -115,14 +114,16 @@
     <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
       <input type="file" id="fileInput" accept="image/*,video/*">
       <button id="sendFileBtn" class="small">إرسال ملف</button>
+      <button id="recordVoiceBtn" class="small">🎤 تسجيل صوتي (إرسال)</button>
+      <button id="playVoiceBtn" class="small hidden">▶️ تشغيل صوتي</button>
       <div style="flex:1"></div>
       <div class="muted">لغتي الحالية: <span id="currentLangLabel">—</span></div>
     </div>
 
     <hr style="opacity:0.06;margin:12px 0">
     <h2>📞 مكالمات صوتية مترجمة</h2>
-    <div class="muted">اضغط "📞 اتصال" في صفحة الأصدقاء لبدء مكالمة صوتية. الميكروفون والـ Web Speech مطلوب.</div>
-    <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+    <div class="muted">اضغط "مكالمة" من صفحة الأصدقاء لبدء مكالمة صوتية فورية.</div>
+    <div style="display:flex;gap:8px;margin-top:8px">
       <button id="endCallBtn" class="gray small hidden">إنهاء المكالمة</button>
     </div>
   </section>
@@ -137,14 +138,18 @@
   </div>
 </div>
 
-<footer class="note">هذا تطبيق تعليمي — قبل النشر اضبط قواعد أمان Firebase. استخدم Chrome/Edge لتجربة WebRTC & Web Speech.</footer>
+<footer class="note">مثال تعليمي — عدّل قواعد Firebase قبل النشر. استخدم Chrome/Edge لتجرب الميزات الصوتية.</footer>
 
-<!-- Firebase -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
 <script>
+/* ============================================================
+   ملف واحد شامل: صفحات داخلية + Firebase + WebRTC + Speech
+   ============================================================ */
+
 /* ================= CONFIG ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyCNXyQF2ZCMaxuBplGivMZiz_rFnCt6e0M",
@@ -165,14 +170,15 @@ const langs = [
   {code:"de",name:"Deutsch"},{code:"pt",name:"Português"},{code:"ru",name:"Русский"},{code:"zh",name:"中文"},
   {code:"hi",name:"हिन्दी"},{code:"tr",name:"Türkçe"},{code:"it",name:"Italiano"},{code:"ja",name:"日本語"}
 ];
-function getLangName(c){ const f=langs.find(x=>x.code===c); return f?f.name:c; }
+function getLangName(c){ const f = langs.find(x=>x.code===c); return f?f.name:c; }
 
 /* ================= STATE ================= */
 let currentUser = null;
 let userLang = "ar";
 let currentPeer = null;
 let currentChatId = null;
-let pc = null;
+
+let pc = null;                 // RTCPeerConnection
 let localStream = null;
 let recognition = null;
 let isInCall = false;
@@ -199,7 +205,7 @@ const usernameEl = document.getElementById("username");
 const langSearchEl = document.getElementById("langSearch");
 const langSelectEl = document.getElementById("langSelect");
 const loginBtn = document.getElementById("loginBtn");
-const loginGuestBtn = document.getElementById("loginGuestBtn");
+const guestBtn = document.getElementById("guestBtn");
 
 const userSearchEl = document.getElementById("userSearch");
 const userResultsEl = document.getElementById("userResults");
@@ -213,6 +219,8 @@ const msgInputEl = document.getElementById("msgInput");
 const sendBtnEl = document.getElementById("sendBtn");
 const fileInputEl = document.getElementById("fileInput");
 const sendFileBtnEl = document.getElementById("sendFileBtn");
+const recordVoiceBtn = document.getElementById("recordVoiceBtn");
+const playVoiceBtn = document.getElementById("playVoiceBtn");
 const chatLangSelect = document.getElementById("chatLangSelect");
 const currentLangLabel = document.getElementById("currentLangLabel");
 const endCallBtn = document.getElementById("endCallBtn");
@@ -226,13 +234,12 @@ const rejectBtn = document.getElementById("rejectBtn");
 function showPage(name){
   Object.values(pages).forEach(p => p.classList.remove("active"));
   pages[name].classList.add("active");
-  // update nav active styles (optional)
 }
 navLogin.addEventListener("click", ()=> showPage("login"));
-navSearch.addEventListener("click", ()=> { showPage("search"); });
-navRequests.addEventListener("click", ()=> { showPage("requests"); });
-navFriends.addEventListener("click", ()=> { showPage("friends"); });
-navChat.addEventListener("click", ()=> { showPage("chat"); });
+navSearch.addEventListener("click", ()=> showPage("search"));
+navRequests.addEventListener("click", ()=> showPage("requests"));
+navFriends.addEventListener("click", ()=> showPage("friends"));
+navChat.addEventListener("click", ()=> showPage("chat"));
 
 /* ================= Render languages ================= */
 function renderLangs(filter=""){
@@ -262,10 +269,10 @@ chatLangSelect.addEventListener("change", async (e) => {
 });
 renderLangs();
 
-/* ================= Auth: login / logout / restore ================= */
+/* ================= Auth: login / guest / restore / logout ================= */
 loginBtn.addEventListener("click", async () => {
   const name = usernameEl.value.trim();
-  if(!name) return alert("أدخل اسم المستخدم أولاً");
+  if(!name) return alert("أدخل اسم المستخدم");
   currentUser = name;
   userLang = langSelectEl.value || "ar";
   await db.ref("users/" + currentUser).set({ lang: userLang, online: true, lastSeen: Date.now() });
@@ -274,14 +281,10 @@ loginBtn.addEventListener("click", async () => {
   usernameEl.disabled = true;
   navLogout.classList.remove("hidden");
   showPage("friends");
-  loadRequests();
-  loadFriends();
-  watchIncomingCalls();
-  setupTranscriptsListenerForUser();
-  updateReqBadge();
+  loadRequests(); loadFriends(); watchIncomingCalls(); setupTranscriptsListenerForUser(); updateReqBadge();
 });
 
-loginGuestBtn.addEventListener("click", async () => {
+guestBtn.addEventListener("click", async () => {
   const name = "Guest_" + Math.floor(Math.random()*9000+1000);
   usernameEl.value = name;
   await loginBtn.click();
@@ -289,36 +292,27 @@ loginGuestBtn.addEventListener("click", async () => {
 
 navLogout.addEventListener("click", async () => {
   if(!currentUser) return;
-  // mark offline and cleanup
   await db.ref("users/" + currentUser).update({ online: false, lastSeen: Date.now() });
-  localStorage.removeItem("chat_user");
-  localStorage.removeItem("chat_lang");
-  currentUser = null;
-  userLang = "ar";
-  usernameEl.disabled = false;
-  usernameEl.value = "";
+  localStorage.removeItem("chat_user"); localStorage.removeItem("chat_lang");
+  currentUser = null; userLang = "ar";
+  usernameEl.disabled = false; usernameEl.value = "";
   navLogout.classList.add("hidden");
-  // remove UI
   userResultsEl.innerHTML = ""; requestsListEl.innerHTML = ""; friendsListEl.innerHTML = ""; chatBoxEl.innerHTML = "";
   showPage("login");
 });
 
-/* restore on load */
+/* restore */
 window.addEventListener("load", async () => {
   const saved = localStorage.getItem("chat_user");
   const savedLang = localStorage.getItem("chat_lang");
   if(saved){
     currentUser = saved;
     userLang = savedLang || "ar";
-    usernameEl.value = currentUser;
-    usernameEl.disabled = true;
-    navLogout.classList.remove("hidden");
+    usernameEl.value = currentUser; usernameEl.disabled = true; navLogout.classList.remove("hidden");
     await db.ref("users/" + currentUser).set({ lang: userLang, online: true, lastSeen: Date.now() });
     loadRequests(); loadFriends(); watchIncomingCalls(); setupTranscriptsListenerForUser(); updateReqBadge();
   }
 });
-
-/* when user closes tab */
 window.addEventListener("beforeunload", async () => {
   if(currentUser){
     try{ await db.ref("users/" + currentUser).update({ online: false, lastSeen: Date.now() }); } catch(e){}
@@ -334,15 +328,14 @@ userSearchEl.addEventListener("input", async (e) => {
   const users = snap.val() || {};
   for(const name in users){
     if(name.toLowerCase().includes(q) && name !== currentUser){
-      const row = document.createElement("div");
-      row.className = "user-row";
-      const meta = document.createElement("div"); meta.className = "meta";
+      const row = document.createElement("div"); row.className="user-row";
+      const meta = document.createElement("div"); meta.className="meta";
       meta.innerHTML = `<strong>${name}</strong><div class="muted">اللغة: ${getLangName(users[name].lang)}</div>`;
       const actions = document.createElement("div"); actions.style.display="flex"; actions.style.gap="6px";
       const sendBtn = document.createElement("button"); sendBtn.className="small"; sendBtn.textContent="إرسال طلب";
       sendBtn.onclick = () => sendFriendRequest(name);
       const viewBtn = document.createElement("button"); viewBtn.className="small gray"; viewBtn.textContent="عرض";
-      viewBtn.onclick = () => alert("عرض ملف: " + name + "\n(ميزة يمكن توسيعها لاحقاً)");
+      viewBtn.onclick = () => alert("عرض ملف: " + name + "\n(ميزة توسّع لاحقاً)");
       actions.appendChild(sendBtn); actions.appendChild(viewBtn);
       row.appendChild(meta); row.appendChild(actions);
       userResultsEl.appendChild(row);
@@ -358,7 +351,6 @@ async function sendFriendRequest(toUser){
   alert("تم إرسال طلب صداقة إلى " + toUser);
 }
 
-/* load incoming requests */
 function loadRequests(){
   if(!currentUser) return;
   db.ref("friendRequests/" + currentUser).on("value", snap => {
@@ -370,8 +362,7 @@ function loadRequests(){
       return;
     }
     for(const fromUser in data){
-      const row = document.createElement("div");
-      row.className = "user-row";
+      const row = document.createElement("div"); row.className="user-row";
       row.innerHTML = `<div class="meta"><strong>${fromUser}</strong><div class="muted">طلب صداقة وارد</div></div>`;
       const acceptBtn = document.createElement("button"); acceptBtn.className="small"; acceptBtn.textContent="قبول";
       acceptBtn.onclick = () => acceptRequest(fromUser);
@@ -398,7 +389,6 @@ async function rejectRequest(fromUser){
   alert("تم رفض " + fromUser);
 }
 
-/* update request badge */
 function updateReqBadge(){
   if(!currentUser) { reqBadge.classList.add("hidden"); return; }
   db.ref("friendRequests/" + currentUser).once("value").then(snap=>{
@@ -419,16 +409,15 @@ function loadFriends(){
       return;
     }
     for(const friend in data){
-      const row = document.createElement("div");
-      row.className = "user-row";
+      const row = document.createElement("div"); row.className="user-row";
       const meta = document.createElement("div"); meta.className="meta"; meta.innerHTML = `<strong>${friend}</strong>`;
       const chatBtn = document.createElement("button"); chatBtn.className="small"; chatBtn.textContent="دردشة";
       chatBtn.onclick = ()=> openChat(friend);
-      const callBtn = document.createElement("button"); callBtn.className="small gray"; callBtn.textContent="📞 اتصال";
+      const callBtn = document.createElement("button"); callBtn.className="small gray"; callBtn.textContent="📞 مكالمة";
       callBtn.onclick = ()=> initiateCall(friend);
-      const delBtn = document.createElement("button"); delBtn.className="small gray"; delBtn.textContent="حذف";
-      delBtn.onclick = ()=> removeFriend(friend);
-      row.appendChild(meta); row.appendChild(chatBtn); row.appendChild(callBtn); row.appendChild(delBtn);
+      const removeBtn = document.createElement("button"); removeBtn.className="small gray"; removeBtn.textContent="حذف";
+      removeBtn.onclick = ()=> removeFriend(friend);
+      row.appendChild(meta); row.appendChild(chatBtn); row.appendChild(callBtn); row.appendChild(removeBtn);
       friendsListEl.appendChild(row);
     }
   });
@@ -442,7 +431,7 @@ async function removeFriend(name){
   alert("تم الحذف");
 }
 
-/* ================= Chat: open/send/render ================= */
+/* ================= Chat: open/send/render (with auto-translate) ================= */
 function getChatId(a,b){ return [a,b].sort().join("_"); }
 
 function openChat(peer){
@@ -453,62 +442,78 @@ function openChat(peer){
   chatBoxEl.innerHTML = "";
   showPage("chat");
 
-  // listen messages
+  // listen for messages
   db.ref("chats/" + currentChatId + "/messages").off();
-  db.ref("chats/" + currentChatId + "/messages").on("child_added", snap => {
+  db.ref("chats/" + currentChatId + "/messages").on("child_added", async snap => {
     const data = snap.val();
-    renderMessage(data);
+    await renderMessageWithTranslation(data);
   });
 }
 
-function renderMessage(data){
+/* render message: translate automatically to user's language and show audio and text */
+async function renderMessageWithTranslation(data){
   const el = document.createElement("div");
   el.className = "msg " + (data.sender === currentUser ? "me" : "other");
-  let content = "";
+  // message types: text, media (image/video), audio (voice clip)
   if(data.type === "media"){
     if(data.mediaType && data.mediaType.startsWith("image")){
-      content = `<b>${escapeHtml(data.sender)}:</b><br><img src="${data.text}" alt="image">`;
+      el.innerHTML = `<b>${escapeHtml(data.sender)}:</b><br><img src="${data.text}" alt="image">`;
     } else {
-      content = `<b>${escapeHtml(data.sender)}:</b><br><video src="${data.text}" controls></video>`;
+      el.innerHTML = `<b>${escapeHtml(data.sender)}:</b><br><video src="${data.text}" controls></video>`;
     }
-  } else {
-    content = `<b>${escapeHtml(data.sender)}:</b> ${escapeHtml(data.text)}`;
-    // if incoming message and in different language, show translation suggestion
-    if(data.sender !== currentUser && data.lang && data.lang !== userLang){
-      content += `<br><small class="muted">ترجمة قيد الانتظار...</small>`;
-      // attempt translation (non-blocking)
-      translateText(data.text, userLang).then(t => {
-        // find this message's element and append translation (best-effort)
-        const small = document.createElement("div");
-        small.className = "muted";
-        small.innerHTML = `→ ترجمة (${data.lang} → ${userLang}): ${escapeHtml(t)} <button class="small" onclick="speakText('${escapeJs(t)}','${userLang}')">🔊</button>`;
-        el.appendChild(small);
-        chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
-      }).catch(()=>{});
+  } else if(data.type === "voice"){
+    // show audio player and show transcript + translated transcript
+    el.innerHTML = `<b>${escapeHtml(data.sender)}:</b><br><audio src="${data.audioUrl}" controls></audio>`;
+    // if transcript exists
+    if(data.transcript){
+      const tdiv = document.createElement("div"); tdiv.className="muted";
+      tdiv.textContent = `${data.sender} (النص): ${data.transcript}`;
+      el.appendChild(tdiv);
+      // translate transcript to my language
+      const translated = await translateText(data.transcript, userLang);
+      const tr = document.createElement("div"); tr.className="muted";
+      tr.innerHTML = `→ ترجمة (${data.lang || 'auto'} → ${userLang}): ${escapeHtml(translated)} <button class="small" onclick="speakText('${escapeJs(translated)}','${userLang}')">🔊</button>`;
+      el.appendChild(tr);
+    } else {
+      // if no transcript, attempt to convert audio -> not trivial in browser; we rely on sender's SpeechRecognition (we do that in recording)
+      const note = document.createElement("div"); note.className="muted";
+      note.textContent = "لا يوجد تفريغ صوتي (transcript).";
+      el.appendChild(note);
+    }
+  } else { // plain text
+    // translate text to user's language
+    const translated = await translateText(data.text, userLang);
+    el.innerHTML = `<b>${escapeHtml(data.sender)}:</b> ${escapeHtml(translated)}`;
+    // also show original if different language (optional)
+    if(data.lang && data.lang !== userLang){
+      const orig = document.createElement("div"); orig.className="muted";
+      orig.textContent = `(${data.lang}) الأصلي: ${escapeHtml(data.text)}`;
+      el.appendChild(orig);
     }
   }
-  el.innerHTML = content;
   chatBoxEl.appendChild(el);
   chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
 }
 
+/* send text message (store its original text + lang) */
 sendBtnEl.addEventListener("click", async () => {
-  if(!currentPeer) return alert("اختر صديقاً من صفحة الأصدقاء أولاً.");
+  if(!currentPeer) return alert("اختر صديقاً أولاً من صفحة الأصدقاء");
   const text = msgInputEl.value.trim();
   if(!text) return;
   const id = currentChatId || getChatId(currentUser, currentPeer);
   await db.ref("chats/" + id + "/messages").push({
-    sender: currentUser, text, lang: userLang, type: "text", timestamp: Date.now()
+    sender: currentUser, text, lang: userLang || 'auto', type: "text", timestamp: Date.now()
   });
   msgInputEl.value = "";
 });
 
-/* send file */
+/* send media file */
 sendFileBtn.addEventListener("click", async () => {
-  if(!currentPeer) return alert("اختر صديقاً أولاً.");
-  const f = fileInputEl.files[0];
+  if(!currentPeer) return alert("اختر صديقاً أولاً");
+  const f = fileInput.files[0];
   if(!f) return alert("اختر ملفاً");
-  const storageRef = storage.ref("chatFiles/" + Date.now() + "_" + f.name);
+  const path = "chatFiles/" + Date.now() + "_" + sanitizeFilename(f.name);
+  const storageRef = storage.ref(path);
   const uploadTask = storageRef.put(f);
   uploadTask.on('state_changed', null, err => alert("خطأ بالرفع: " + err.message), async () => {
     const url = await storageRef.getDownloadURL();
@@ -516,12 +521,89 @@ sendFileBtn.addEventListener("click", async () => {
     await db.ref("chats/" + id + "/messages").push({
       sender: currentUser, text: url, lang: userLang, type: "media", mediaType: f.type, timestamp: Date.now()
     });
-    fileInputEl.value = "";
+    fileInput.value = "";
   });
 });
 
-/* ================= Translate helper ================= */
+/* ================= Voice recording: record audio + SpeechRecognition to get transcript, then upload audio + push message (type=voice) ================= */
+recordVoiceBtn.addEventListener("click", async () => {
+  if(!currentPeer) return alert("اختر صديقاً أولاً");
+  // check APIs
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!navigator.mediaDevices || !SpeechRecognition){
+    return alert("المتصفح لا يدعم التسجيل أو SpeechRecognition. استخدم Chrome/Edge.");
+  }
+
+  // get mic stream
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch(err) {
+    return alert("فشل بالحصول على المايك: " + err.message);
+  }
+
+  // set up recorder
+  const recorder = new MediaRecorder(stream);
+  const chunks = [];
+  recorder.ondataavailable = e => chunks.push(e.data);
+
+  // set up speech recognition
+  const rec = new SpeechRecognition();
+  rec.lang = userLang || 'ar';
+  rec.interimResults = false;
+  rec.continuous = false;
+
+  let finalTranscript = "";
+
+  rec.onresult = (ev) => {
+    const last = ev.results[ev.resultIndex];
+    finalTranscript += last[0].transcript.trim();
+  };
+  rec.onerror = (e) => console.warn("recognition error", e);
+  rec.onend = () => {
+    // recognition ended
+  };
+
+  // start both
+  try {
+    rec.start();
+  } catch(e){}
+  recorder.start();
+
+  // record for 4 seconds (adjustable)
+  recordVoiceBtn.textContent = "⏹️ تسجيل..."; recordVoiceBtn.disabled = true;
+  setTimeout(async () => {
+    recorder.stop();
+    try{ rec.stop(); } catch(e){}
+    recordVoiceBtn.textContent = "🎤 تسجيل صوتي (إرسال)"; recordVoiceBtn.disabled = false;
+    stream.getTracks().forEach(t=>t.stop());
+  }, 4000);
+
+  recorder.onstop = async () => {
+    const blob = new Blob(chunks, { type: 'audio/webm' });
+    const filename = "voices/" + Date.now() + "_" + currentUser + ".webm";
+    const ref = storage.ref(filename);
+    await ref.put(blob);
+    const url = await ref.getDownloadURL();
+
+    // push message with audio URL and transcript (if any)
+    const id = currentChatId || getChatId(currentUser, currentPeer);
+    await db.ref("chats/" + id + "/messages").push({
+      sender: currentUser,
+      type: "voice",
+      audioUrl: url,
+      transcript: finalTranscript || "",
+      lang: userLang || 'auto',
+      timestamp: Date.now()
+    });
+
+    // if transcript absent, nothing we can do (server-side STT required)
+  };
+});
+
+/* ================= Translate helper (gtx) ================= */
 async function translateText(text, target){
+  if(!text) return "";
   try{
     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(target)}&dt=t&q=${encodeURIComponent(text)}`;
     const res = await fetch(url);
@@ -533,13 +615,18 @@ async function translateText(text, target){
   }
 }
 
-/* escape html */
-function escapeHtml(text){ if(!text) return ""; return text.replace(/[&<>"'`=\/]/g, s=>'&#'+s.charCodeAt(0)+';'); }
-function escapeJs(text){ if(!text) return ""; return text.replace(/['\\\n\r]/g, m=> (m==='\n'?'\\n':m==='\r'?'\\r': '\\'+m)); }
+/* ================= Speech Synthesis (speak) ================= */
+function speakText(text, lang){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    window.speechSynthesis.speak(u);
+  } catch(e){ console.error("speak error", e); }
+}
 
 /* ================= WebRTC Calling (signaling via Firebase) ================= */
+/* This is basic: create offer/answer + ICE via DB. For production add TURN server. */
 
-/* initiate call to peer */
 async function initiateCall(peerName){
   if(!currentUser) return alert("سجّل أولاً");
   if(!peerName) return;
@@ -547,34 +634,21 @@ async function initiateCall(peerName){
   const chatId = getChatId(currentUser, peerName);
   currentChatId = chatId;
 
-  // write meta
   await db.ref("calls/" + chatId + "/meta").set({
-    from: currentUser,
-    to: peerName,
-    callerLang: userLang,
-    timestamp: Date.now()
+    from: currentUser, to: peerName, callerLang: userLang, timestamp: Date.now()
   });
 
   pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
 
-  // get mic
-  try{
-    localStream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
-  } catch(err){
-    return alert("مشكلة بالحصول على الميكروفون: " + err.message);
-  }
+  try { localStream = await navigator.mediaDevices.getUserMedia({ audio:true, video:false }); }
+  catch(err){ return alert("فشل بالحصول على الميكروفون: " + err.message); }
   localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
-  // ICE -> push to DB
   const candRef = db.ref("calls/" + chatId + "/candidates");
   pc.onicecandidate = e => { if(e.candidate) candRef.push(JSON.stringify(e.candidate)); };
 
-  // remote audio
   pc.ontrack = ev => {
-    const audio = document.createElement("audio");
-    audio.autoplay = true;
-    audio.srcObject = ev.streams[0];
-    audio.style.display = "none";
+    const audio = document.createElement("audio"); audio.autoplay = true; audio.srcObject = ev.streams[0]; audio.style.display="none";
     document.body.appendChild(audio);
   };
 
@@ -582,12 +656,10 @@ async function initiateCall(peerName){
   await pc.setLocalDescription(offer);
   await db.ref("calls/" + chatId + "/offer").set(JSON.stringify(offer));
 
-  // listen for answer
   db.ref("calls/" + chatId + "/answer").on("value", async snap => {
     const val = snap.val();
     if(val && pc && !pc.currentRemoteDescription){
       await pc.setRemoteDescription(JSON.parse(val));
-      // start recognition -> translate -> push transcripts
       startSpeechRecognitionAndTranslate(chatId, userLang);
       isInCall = true;
       endCallBtn.classList.remove("hidden");
@@ -595,7 +667,6 @@ async function initiateCall(peerName){
     }
   });
 
-  // listen remote ICE
   db.ref("calls/" + chatId + "/candidates").on("child_added", async snap => {
     const v = snap.val();
     if(v && pc) {
@@ -603,15 +674,13 @@ async function initiateCall(peerName){
     }
   });
 
-  // show transcripts for caller
+  // show transcripts pushed to call
   db.ref("calls/" + chatId + "/transcripts").on("child_added", snap => {
     const d = snap.val();
     if(!d) return;
-    const el = document.createElement("div");
-    el.className = "msg me";
+    const el = document.createElement("div"); el.className="msg me";
     el.innerHTML = `<b>🔁 ترجمة (${d.source}→${d.target}):</b> ${escapeHtml(d.translated)}`;
-    chatBoxEl.appendChild(el);
-    chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+    chatBoxEl.appendChild(el); chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
   });
 }
 
@@ -623,8 +692,7 @@ function watchIncomingCalls(){
     if(!val || !val.meta) return;
     const meta = val.meta;
     if(meta.to === currentUser && !isInCall){
-      incomingCallId = chatId;
-      incomingCaller = meta.from;
+      incomingCallId = chatId; incomingCaller = meta.from;
       callerTxtEl.textContent = `📞 اتصال وارد من: ${incomingCaller}`;
       incomingCallEl.style.display = "block";
     }
@@ -636,22 +704,16 @@ answerBtn.addEventListener("click", async () => {
   if(!incomingCallId) return;
   incomingCallEl.style.display = "none";
   const metaSnap = await db.ref("calls/" + incomingCallId + "/meta").once("value");
-  const meta = metaSnap.val();
-  if(!meta) return alert("مشكلة: لم نعثر على بيانات المكالمة");
-  currentPeer = meta.from;
-  currentChatId = incomingCallId;
+  const meta = metaSnap.val(); if(!meta) return alert("لا توجد بيانات للمكالمة");
+  currentPeer = meta.from; currentChatId = incomingCallId;
 
   pc = new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
-  try{
-    localStream = await navigator.mediaDevices.getUserMedia({audio:true,video:false});
-  } catch(err){ return alert("فشل بالحصول على المايك: " + err.message); }
+  try{ localStream = await navigator.mediaDevices.getUserMedia({audio:true,video:false}); }
+  catch(err){ return alert("فشل بالحصول على المايك: " + err.message); }
   localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
   pc.ontrack = ev => {
-    const audio = document.createElement("audio");
-    audio.autoplay = true;
-    audio.srcObject = ev.streams[0];
-    audio.style.display = "none";
+    const audio = document.createElement("audio"); audio.autoplay = true; audio.srcObject = ev.streams[0]; audio.style.display="none";
     document.body.appendChild(audio);
   };
 
@@ -659,142 +721,98 @@ answerBtn.addEventListener("click", async () => {
   pc.onicecandidate = e => { if(e.candidate) candRef.push(JSON.stringify(e.candidate)); };
 
   const offerSnap = await db.ref("calls/" + incomingCallId + "/offer").once("value");
-  const offer = offerSnap.val();
-  if(!offer) return alert("لا يوجد عرض (offer).");
+  const offer = offerSnap.val(); if(!offer) return alert("لا يوجد عرض");
   await pc.setRemoteDescription(JSON.parse(offer));
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
   await db.ref("calls/" + incomingCallId + "/answer").set(JSON.stringify(answer));
 
   db.ref("calls/" + incomingCallId + "/candidates").on("child_added", async snap => {
-    const v = snap.val();
-    if(v && pc) {
-      try { await pc.addIceCandidate(new RTCIceCandidate(JSON.parse(v))); } catch(e){}
-    }
+    const v = snap.val(); if(v && pc) { try{ await pc.addIceCandidate(new RTCIceCandidate(JSON.parse(v))); } catch(e){} }
   });
 
-  // listen transcripts to speak when targeted to me
+  // listen transcripts and speak when targeted
   db.ref("calls/" + incomingCallId + "/transcripts").on("child_added", async snap => {
-    const d = snap.val();
-    if(!d) return;
+    const d = snap.val(); if(!d) return;
     if(d.to === currentUser){
       speakText(d.translated, d.target);
-      const el = document.createElement("div");
-      el.className = "msg other";
+      const el = document.createElement("div"); el.className="msg other";
       el.innerHTML = `<b>🔁 (${d.from}→${d.target}):</b> ${escapeHtml(d.translated)}`;
-      chatBoxEl.appendChild(el);
-      chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+      chatBoxEl.appendChild(el); chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
     }
   });
 
-  isInCall = true;
-  endCallBtn.classList.remove("hidden");
-  chatTitleEl.textContent = `📞 في مكالمة مع ${currentPeer}`;
+  isInCall = true; endCallBtn.classList.remove("hidden"); chatTitleEl.textContent = `📞 في مكالمة مع ${currentPeer}`;
 });
 
-/* reject call */
+/* reject incoming call */
 rejectBtn.addEventListener("click", async () => {
-  if(!incomingCallId) { incomingCallEl.style.display = "none"; return; }
+  if(!incomingCallId){ incomingCallEl.style.display="none"; return; }
   await db.ref("calls/" + incomingCallId).remove();
-  incomingCallId = null; incomingCaller = null;
-  incomingCallEl.style.display = "none";
+  incomingCallId = null; incomingCaller = null; incomingCallEl.style.display="none";
 });
 
-/* end call cleanup */
+/* end call */
 endCallBtn.addEventListener("click", async () => { await endCall(); });
 async function endCall(){
-  if(currentChatId) {
-    await db.ref("calls/" + currentChatId).remove();
-  }
+  if(currentChatId) await db.ref("calls/" + currentChatId).remove();
   if(pc){ try{ pc.close(); } catch(e){} pc = null; }
   if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localStream = null; }
   if(recognition){ try{ recognition.onend=null; recognition.stop(); } catch(e){} recognition=null; }
-  isInCall = false;
-  incomingCallId = null; incomingCaller = null; currentChatId = null; currentPeer = null;
-  chatTitleEl.textContent = "💬 لا يوجد محادثة";
-  endCallBtn.classList.add("hidden");
+  isInCall = false; incomingCallId=null; incomingCaller=null; currentChatId=null; currentPeer=null;
+  chatTitleEl.textContent = "💬 لا يوجد محادثة"; endCallBtn.classList.add("hidden");
 }
 
-/* speech recognition (caller) -> translate -> push transcript */
+/* Speech recognition while in call (caller) -> translate -> push transcripts */
 function startSpeechRecognitionAndTranslate(chatId, fromLang){
   if(recognition){ try{ recognition.onend=null; recognition.stop(); } catch(e){} recognition=null; }
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SpeechRecognition){
-    alert("المتصفح لا يدعم SpeechRecognition. استخدم Chrome/Edge.");
-    return;
-  }
+  if(!SpeechRecognition){ alert("المتصفح لا يدعم SpeechRecognition"); return; }
   recognition = new SpeechRecognition();
   recognition.lang = fromLang;
   recognition.continuous = true;
   recognition.interimResults = false;
-
   recognition.onresult = async (ev) => {
     try{
       const last = ev.results[ev.results.length-1];
       const text = last[0].transcript.trim();
       if(!text) return;
       const metaSnap = await db.ref("calls/" + chatId + "/meta").once("value");
-      const meta = metaSnap.val();
-      if(!meta) return;
+      const meta = metaSnap.val(); if(!meta) return;
       const toUser = meta.to;
       const userSnap = await db.ref("users/" + toUser).once("value");
       const receiverLang = (userSnap.val() && userSnap.val().lang) ? userSnap.val().lang : "en";
       const translated = await translateText(text, receiverLang);
       await db.ref("calls/" + chatId + "/transcripts").push({
-        from: currentUser,
-        to: toUser,
-        original: text,
-        translated: translated,
-        source: fromLang,
-        target: receiverLang,
-        timestamp: Date.now()
+        from: currentUser, to: toUser, original: text, translated, source: fromLang, target: receiverLang, timestamp: Date.now()
       });
-      const el = document.createElement("div");
-      el.className = "msg me";
+      const el = document.createElement("div"); el.className="msg me";
       el.innerHTML = `<b>أنت:</b> ${escapeHtml(text)}<br><small class="muted">→ ترجمة ${receiverLang}: ${escapeHtml(translated)}</small>`;
-      chatBoxEl.appendChild(el);
-      chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
-    } catch(err){
-      console.error("recognition onresult error:", err);
-    }
+      chatBoxEl.appendChild(el); chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+    } catch(err){ console.error("recognition onresult error:", err); }
   };
-
   recognition.onerror = e => console.warn("recognition error", e);
   recognition.onend = () => { if(isInCall){ try{ recognition.start(); } catch(e){} } };
   try{ recognition.start(); } catch(e){ console.error("rec start err", e); }
 }
 
-/* speak */
-function speakText(text, lang){
-  try{
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
-    u.rate = 1;
-    u.pitch = 1;
-    window.speechSynthesis.speak(u);
-  } catch(err){ console.error("speak error", err); }
-}
-
-/* transcripts listener for user (speak and render) */
+/* transcripts listener for user */
 function setupTranscriptsListenerForUser(){
   db.ref("calls").on("child_added", snap => {
     const callId = snap.key;
     db.ref("calls/" + callId + "/transcripts").on("child_added", async tSnap => {
-      const d = tSnap.val();
-      if(!d) return;
+      const d = tSnap.val(); if(!d) return;
       if(d.to === currentUser){
         speakText(d.translated, d.target);
-        const el = document.createElement("div");
-        el.className = "msg other";
+        const el = document.createElement("div"); el.className="msg other";
         el.innerHTML = `<b>🔁 ${escapeHtml(d.from)} → ${escapeHtml(d.target)}:</b> ${escapeHtml(d.translated)}`;
-        chatBoxEl.appendChild(el);
-        chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
+        chatBoxEl.appendChild(el); chatBoxEl.scrollTop = chatBoxEl.scrollHeight;
       }
     });
   });
 }
 
-/* ================= Utility: watch call removal cleanup ================= */
+/* cleanup on call removal */
 db.ref("calls").on("child_removed", snap => {
   if(snap.key === currentChatId || snap.key === incomingCallId){
     endCall();
@@ -802,15 +820,19 @@ db.ref("calls").on("child_removed", snap => {
   }
 });
 
-/* ================= Helpers exposed for debug ================= */
+/* ================= Utilities ================= */
+function escapeHtml(text){ if(!text) return ""; return text.replace(/[&<>"'`=\/]/g, s=>'&#'+s.charCodeAt(0)+';'); }
+function escapeJs(text){ if(!text) return ""; return text.replace(/['\\\n\r]/g, m=> (m==='\n'?'\\n':m==='\r'?'\\r': '\\'+m)); }
+function sanitizeFilename(n){ return n.replace(/[^a-z0-9.\-_]/gi,'_'); }
+
+/* expose some functions for console or quick use */
 window.openChat = openChat;
 window.initiateCall = initiateCall;
 
-/* ================= Init small bits ================= */
+/* initialize some UI bits if user already logged in */
 function init(){
-  // hide logout by default
   if(!currentUser) navLogout.classList.add("hidden");
-  // attach loadRequests / loadFriends if user exists
+  // load friends/requests if logged in
   if(currentUser){ loadRequests(); loadFriends(); watchIncomingCalls(); setupTranscriptsListenerForUser(); updateReqBadge(); }
 }
 init();
